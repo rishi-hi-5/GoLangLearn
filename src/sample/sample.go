@@ -192,6 +192,224 @@ func main() {
 
 	// fmt.Println(englishbye.ByeInEnglish())
 	// fmt.Println(spanishbye.ByeInSpanish())
+
+	// go can run without any go file once executable is created
+	// go build creates go exe file but if we need to create in proper structured manner
+	// then we need to install the same  with go install command the exe file is created in bin older
+
+	// the packages can also name like a uri strucutre.
+
+	// go get github.com/accountname/<name> <-- to download package
+
+	// to view doc
+	// go doc <specific package>
+	// go doc <specific package> <specific function>
+
+	// to add comments to the code
+	// they are simple comments with //
+	// for package it should start with Package followed by package name and description
+	// for function it is function name and description
+	// code examples can also be added with intending them
+
+	// to run go doc server type godoc -http=:<port> . this godoc is different from go doc
+
+	// check why godoc command is not working
+
+	// 5. Arrays
+
+	// array holds specific number of elements and it cannot grow or shrink
+	// arrayExample()
+
+	// File Example
+	// fileExample()
+
+	// go arrays cannot shrink and grow . to address this we can use slices
+
+	// 6. slices
+	// slices are like collection that grow to hold additional items.
+
+	// slice and array has one difference you dont mention anything for number of elements in slice
+	// sliceExample()
+
+	// how to get command line arguments
+	// slice operator can be used with other slices as well
+
+	// osArgsExample()
+
+	//variadic functions
+
+	// functions that takes in variable number of arguments
+
+	// to make a variadic function we use ...(also called elipsis)
+
+	// variadicFunctionExample("Hi", "How", "Are", "You")
+	// variadicFunctionExample("m", "fine")
+
+	// non variadic arg if present are compulsory
+
+	// variadicFunctionExample2("2")
+	// variadicFunctionExample2("2", 3, 4)
+
+	// math package offers Max limims
+	// fmt.Println(math.Inf(-1)) // - sign denotes negative infinity
+	// fmt.Println(math.Inf(1))
+
+	// we can also pass slices to variadic function
+
+	// var sampleSlice []string
+	// sampleSlice = append(sampleSlice, "12", "13")
+	// variadicFunctionExample(sampleSlice...)
+
+	// 7. Labeling data: Maps
+}
+
+func variadicFunctionExample2(compulsory string, notCompulsory ...int) {
+	fmt.Println(compulsory)
+	fmt.Println(notCompulsory)
+}
+
+func variadicFunctionExample(strings ...string) { // strings variables holds a slice
+	for _, str := range strings {
+		fmt.Println(str)
+	}
+}
+
+func osArgsExample() {
+
+	myArray := os.Args
+	fmt.Println(myArray[1:])
+}
+
+func sliceExample() {
+	var mySlice []int = []int{1, 2, 3, 4, 5}
+	fmt.Println(mySlice)
+
+	// calling slice would not make the automatically amake the variable
+
+	var mySlice2 []string
+	mySlice2 = make([]string, 7)
+	fmt.Println(mySlice2)
+
+	mySlice3 := make([]string, 5)
+	mySlice3[2] = "1"
+	mySlice3[1] = "3"
+	fmt.Println(mySlice3)
+
+	// why not use slice instead of array directly ?
+
+	//slices are built on top of array, understanding slices would be difficult if you cannot understand array used for its impl.
+
+	//creating slice from array
+
+	myArray := [5]int{1, 3, 4, 5, 6}
+
+	sliceFromArray := myArray[1:3] // starting is inclusive and ending is exclusive
+
+	fmt.Println(sliceFromArray)
+
+	//slice operator has default for both start and stop indexes for slice
+	// start slice :: 0
+	// stop slice :: length of array
+
+	// slice is microscopic focusing on array
+
+	// changing underlying array would also result in changing the slice
+
+	// same goes for the changes from slice to array
+
+	// with make you avoid working on the array from which the slice is created and hence avoid confusion.
+
+	// go offers built in function append which can help you get new slice including older elements.
+
+	var extendSlice []string = make([]string, 2)
+
+	extendSlice[0] = "hello"
+	extendSlice[1] = "bye"
+
+	extendSlice = append(extendSlice, "oh", "	hi", "new", "slice")
+
+	fmt.Println(extendSlice, len(extendSlice))
+
+	//always assign the value from append to same slice which was extended to avoid inconsistent behaviour
+
+	// internally to slice an array is managed and if the array doesnt have sufficent space for append a new array will be created
+	// only store one slice when appending.
+
+	// slice has nil as there zero value instead of being specific to the type of slice as compared to array.
+
+	// len function returns 0 if nil is passed.
+
+	var sampleSlice []string //nil slice
+
+	fmt.Println(sampleSlice, len(sampleSlice))
+	sampleSlice = append(sampleSlice, "oh", "what???")
+
+	fmt.Println(sampleSlice)
+}
+
+func fileExample() {
+	file, err := os.Open("D:\\Hustle\\programming\\learning_go\\GoLangLearn\\sampleTextFile.txt")
+
+	if err != nil {
+		log.Fatal("Error while reading file", err)
+	}
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
+	}
+
+	err = file.Close()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if scanner.Err() != nil {
+		log.Fatal(scanner.Err())
+	}
+}
+
+func arrayExample() {
+	var animes [3]string
+	animes[0] = "Jojo"
+	animes[1] = "Naruto"
+	animes[2] = "Initial D"
+
+	// default values are assigned in absence of value // also called zero values
+	fmt.Println(animes[1])
+
+	// if we already know what will contain in array during declaration then the same can be initialized
+	// with array literal
+
+	var intArray [3]int = [3]int{1, 3, 4}
+
+	fmt.Println(intArray[2])
+
+	// using assignment operator
+
+	floatArray := [3]float64{0.2, 0.3, 0.4}
+
+	fmt.Println(floatArray[0])
+
+	fmt.Println(animes, intArray, floatArray)
+
+	fmt.Printf("%#v\n", floatArray)
+
+	// loop through elements
+
+	for i := 0; i < len(animes); i++ {
+		fmt.Println(animes[i])
+	}
+
+	for index, value := range intArray {
+		fmt.Println(index, value)
+	}
+
+	for _, value := range intArray {
+		fmt.Println(value)
+	}
 }
 
 func returnPointerFromFunction() *int {
