@@ -4,6 +4,10 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+
+	// "greetings"
+	// "greetings/englishbye"
+	// "greetings/spanishbye"
 	"log"
 	"math"
 	"math/rand"
@@ -14,6 +18,10 @@ import (
 	"time"
 	// "math/rand" // one you want to include something specific from package
 )
+
+// package is looked in following folders
+// C:\Program Files\Go\src\greetings (from $GOROOT)
+// 	C:\Users\rishi\go\src\greetings (
 
 func main() {
 
@@ -129,9 +137,61 @@ func main() {
 
 	// it is possible to return pointer from function
 
-	fmt.Println(returnPointerFromFunction())
-	fmt.Println(*returnPointerFromFunction())
+	// fmt.Println(returnPointerFromFunction())
+	// fmt.Println(*returnPointerFromFunction())
 
+	// 4. packages
+
+	// go tool looks or package code in a special directory called workspace
+	// workspace is a directory named go in current user directory
+
+	// workspace directory contain 3 directory bin pkg src
+
+	/*
+		1. bin holds compiled binary executable
+		2. pkg holds compiled binary pkg files
+		3. src holds go source code
+
+		each package goes in its own subdirectory
+	*/
+
+	// always set correcct workspace path with GOPATH before creating or using package structure
+	/*
+		Struture should be following
+		GOPATH
+			--> src
+				--> create modules
+					--> in one of the modules specify package as main
+	*/
+	// fmt.Println(greetings.HelloSir())
+
+	// non capitalized functions package are not available
+
+	// generally package name should match name of directory , but main is exception
+	// main package generally denotes executable.
+
+	// when go run command is given for a file with main packaging
+	// go based on GOPATH (workspace path) tries to find the a custom package mentioned
+
+	//package names should all be lower case and no camel casing
+
+	// contents inside package can be named anything.
+
+	// fmt.Println(greetings.HelloSuperSmartBoy())
+
+	// to declare constant use const instead of var
+
+	// const helloWorld = "hello world" // constants are declared and assinged at the same time and assignment operator doesnt exist in case of constants
+	// const aValue int = 2             // changing constant can result in problem.
+
+	// A constant with Captal letter is exporeted
+
+	// fmt.Println(greetings.DefaultGreeting)
+
+	// Nested package
+
+	// fmt.Println(englishbye.ByeInEnglish())
+	// fmt.Println(spanishbye.ByeInSpanish())
 }
 
 func returnPointerFromFunction() *int {
@@ -390,61 +450,3 @@ func WhiteSpaceExample() {
 	fmt.Println(wow)
 
 }
-
-// output:
-// Hello Beasty
-// Head First Go
-// 6
-// 65 66
-// 123
-//
-// output:
-// Hello Beasty
-// Head First Go
-// 6
-// 65 66
-// 123
-// int
-// string
-// int32
-// float64
-//
-// output:
-// Hello Beasty
-// Head First Go
-// 6
-// 65 66
-// 123
-// int
-// string
-// int32
-// float64
-// 1 2 3
-//
-// output:
-// Hello Beasty
-// Head First Go
-// 6
-// 65 66
-// 123
-// int
-// string
-// int32
-// float64
-// 1 2 3
-// 4 5 6
-//
-// output:
-// Hello Beasty
-// Head First Go
-// 6
-// 65 66
-// 123
-// int
-// string
-// int32
-// float64
-// 1 2 3
-// 4 5 6
-// 1 2
-//
