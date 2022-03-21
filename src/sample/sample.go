@@ -261,6 +261,340 @@ func main() {
 	// variadicFunctionExample(sampleSlice...)
 
 	// 7. Labeling data: Maps
+
+	// map is collection
+
+	// slice, err := getSliceOfStringFromFile()
+
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// fmt.Println(slice)
+
+	// mapExample()
+
+	// 8. structs
+
+	// structExample()
+
+	// 9. defined types
+
+	// typeExample()
+
+	// method and function
+	// methods are similar to function the only difference being it is has a receiver parameter before the funtion name
+	// so the receiver specify which type will receive this method
+	// myMethod()
+
+	// myType := MyType(32)
+	// myType.myMethod()
+
+	// cannot define method for someone else's type (this includes standard library)
+	// also it cannot be defined outside package
+
+	// receiver parameter is alterantive to self (python) and this (java)
+	// convention for naming for type parameter is use first letter of type name.
+
+	// in case of receiver as well pointer concept applies
+
+	// experimentType := ExperimentType(32)
+
+	// experimentType.receiverPointerExample()
+	// fmt.Println(experimentType)
+	// experimentType.receiverPointerExampleWithPointer()
+	// fmt.Println(experimentType)
+
+	// if we there is no difference in calling the method with pointers
+
+	// go automatically converts reviever to pointer
+
+	// we can also implicitly
+
+	// cannot get address of a value , we will get error.
+	// cannot call method on value
+
+	// When calling a method that takes a pointer receiver,
+	// Go can automatically convert a value to a pointer to a receiver if it’s stored in a variable.
+	// If it’s not, you’ll get an error.
+
+}
+
+func (e ExperimentType) receiverPointerExample() {
+	e = 5
+}
+
+func (e *ExperimentType) receiverPointerExampleWithPointer() {
+	*e = 7
+}
+
+type ExperimentType int
+
+type MyType int
+
+func (myType MyType) myMethod() {
+	fmt.Println("Dude dude")
+
+	// we can also print the content of the receiver param
+
+	fmt.Println(myType)
+}
+
+type Liters float64
+type Gallons float64
+type MilliLiters float64
+
+func toGallones(l Liters) Gallons {
+	return Gallons(l * 0.264)
+}
+
+func toLiters(g Gallons) Liters {
+	return Liters(g * 3.785)
+}
+
+// below we cannot redeclare a block, it gives following error
+
+// toGallones redeclared in this blockcompilerDuplicateDecl
+
+// func toGallones(l MilliLiters) MilliLiters {
+// 	return MilliLiters(l / 2)
+// }
+
+func typeExample() {
+	var carFuelInIndia Liters
+	var carFuelInUS Gallons
+
+	carFuelInIndia = 24.5
+	carFuelInUS = 240.50
+
+	fmt.Println(carFuelInIndia, carFuelInUS)
+
+	carFuelInIndia = Liters(30.9)
+	carFuelInUS = Gallons(300.10)
+
+	fmt.Println(carFuelInIndia, carFuelInUS)
+
+	carFuelInUS = Gallons(Liters(30.9))
+
+	fmt.Println(carFuelInUS)
+
+	// cannot assign value from liters var to gallons var but can pass liters for construction of gallons type.
+
+	// but 	carFuelInUS = Gallons(Liters(30.9)) is wrong because gallons are not equal to liter there should be some restriction to this
+
+	// all logical and relational operators by default applies to the what applies to underlying type.
+
+	fmt.Println(toGallones(carFuelInIndia), toLiters(carFuelInUS))
+
+	//++++++++OVERLOADING OF FUNCTIONS IS NOT SUPPORTED ??!! +++++++
+	// it doesnt have support because go lang people thinks it is confusing and fragile.
+
+}
+
+func structExample() {
+	// building storage structure
+	var myStruct struct {
+		f1 int
+		f2 bool
+	}
+	fmt.Println(myStruct)
+
+	//  we print with verb for struct prints out value in literal forat
+
+	fmt.Printf("%#v\n", myStruct)
+
+	myStruct.f1 = 1
+	myStruct.f2 = true
+
+	fmt.Println(myStruct, myStruct.f1)
+
+	// to create type we use the type keyword.
+
+	type customStruct struct {
+		f1 int
+		f2 bool
+		f3 string
+	}
+
+	var myCustomStruct customStruct
+	myCustomStruct.f1 = 1
+	myCustomStruct.f2 = true
+	myCustomStruct.f3 = "custom struct"
+	fmt.Println(myCustomStruct)
+
+	var myDiscountMan discount
+	myDiscountMan.name = "lol"
+	myDiscountMan.rate = 5.0
+
+	fmt.Println("Discount example")
+	fmt.Println(myDiscountMan)
+	changeRates(myDiscountMan)
+	fmt.Println(myDiscountMan)
+
+	//pass by value apples to struc as well that is why the above example doesnt work
+	// because we received copy of struct
+
+	changeActualRates(&myDiscountMan)
+	fmt.Println(myDiscountMan)
+
+	// always use pointer to pass large structure.
+	// struct field names must also be capitalized so that they can be exported.
+
+	myStruct2 := discount{name: "123", rate: 23.45}
+
+	fmt.Println(myStruct2)
+
+	// we may also omit the field while using assignment of struct
+	myStruct2 = discount{rate: 46.45}
+	fmt.Println(myStruct2)
+
+	var nestedStruct struct {
+		name string
+		dis  discount
+	}
+	nestedStruct.name = "faltu example"
+	nestedStruct.dis = myDiscountMan
+
+	fmt.Println(nestedStruct.dis.name)
+
+	// anonymous field struct to avoid calling nested field and directly access field
+
+	var nustaDhur myStruct1
+	nustaDhur.struct1Name = "bablloo"
+	nustaDhur.sturct2Name = "gabloo"
+	nustaDhur.internalStruct.sturct3Name = "wabloo"
+
+	fmt.Println(nustaDhur)
+
+	// the anonymous struct variables or are promoted to outer struct
+}
+
+type myStruct1 struct {
+	struct1Name string
+	myStruct2
+	internalStruct myStruct3
+}
+
+type myStruct2 struct {
+	sturct2Name string
+}
+
+type myStruct3 struct {
+	sturct3Name string
+}
+
+func changeActualRates(myDiscountMan *discount) {
+	myDiscountMan.rate = 6.7
+
+	// why we did not had to use *operator while assigning value like we do in case of most of the pointer example
+	// reason :: dot annotation works on both struct pointer and struct to access value. so we dont need to use * operator in this case
+
+	//  accessing like *myDiscountMan.rate <-- here go would think that rate field in struct is actually a pointer which is not the case
+}
+
+func changeRates(myDiscountMan discount) {
+	myDiscountMan.rate = 6.7
+}
+
+type discount struct {
+	name string
+	rate float64
+}
+
+func mapExample() {
+	var countMap map[string]int
+	countMap = make(map[string]int)
+
+	slice, err := getSliceOfStringFromFile()
+	if err != nil {
+		log.Fatal()
+	}
+
+	for _, name := range slice {
+		countMap[name] = countMap[name] + 1
+	}
+
+	for _, name := range slice {
+		fmt.Println(countMap[name])
+	}
+
+	mapLiteralEx := map[string]string{"hello": "bye", "ohBoy": "ohGirl"}
+
+	fmt.Println(mapLiteralEx)
+
+	mapLiteralEmptyMap := map[int]bool{}
+	fmt.Println(mapLiteralEmptyMap)
+
+	mapLiteralEmptyMap[0] = true
+	fmt.Println(mapLiteralEmptyMap)
+
+	// zero value within map
+	// if we try to access a key that doesnt exist the we get the zero value
+
+	// zero value for map variable is nil
+
+	// play with zero value
+	// check if it is a assigned value or real 0 value
+
+	mapZeroValue := make(map[string]int)
+
+	mapZeroValue["non zero"] = 0
+
+	mapZeroValue["value"] = 5
+
+	value, isZeroValue := mapZeroValue["zero value"]
+	fmt.Println(value, isZeroValue)
+
+	value, isZeroValue = mapZeroValue["non zero"]
+	fmt.Println(value, isZeroValue)
+
+	fmt.Println("Demonstration for delete value")
+	fmt.Println(mapZeroValue["value"])
+	delete(mapZeroValue, "value")
+	fmt.Println(mapZeroValue["value"])
+
+	// while slice and list have range where we get index and value
+	// map do also have support for for range
+	// but we get key value in this case
+
+	for key, value := range mapZeroValue {
+		fmt.Println(key, value)
+	}
+
+	// we can ignore uwanted return variable from map for key and value while using map
+	// in case if we want to ignore value, we can either not consider writting it or use _
+
+	// map printing is unordered.
+
+	// ordering needs to be taken care via programming
+}
+
+func getSliceOfStringFromFile() ([]string, error) {
+	osArgs := os.Args
+	var slice []string
+
+	file, err := os.Open(osArgs[1])
+
+	if err != nil {
+		return nil, err
+	}
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		slice = append(slice, scanner.Text())
+	}
+
+	err = file.Close()
+
+	if err != nil {
+		return nil, err
+	}
+	if scanner.Err() != nil {
+		return nil, scanner.Err()
+	}
+
+	return slice, nil
 }
 
 func variadicFunctionExample2(compulsory string, notCompulsory ...int) {
