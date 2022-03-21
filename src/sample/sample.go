@@ -318,6 +318,64 @@ func main() {
 	// Go can automatically convert a value to a pointer to a receiver if it’s stored in a variable.
 	// If it’s not, you’ll get an error.
 
+	// 10. Encapsulation
+
+	d := date{year: 2021, month: 5, day: 27}
+
+	fmt.Println(d)
+
+	d.setDay(25)
+	d.setMonth(12)
+	d.setYear(2021)
+
+	fmt.Println(d)
+
+	// err := d.setYear(-200)
+	// if err != nil {
+	// 	log.Fatal(err.Error())
+	// }
+
+	d2 := date{}
+
+	d2.setDay(2)
+	d2.year = -56
+	d2.month = -200
+
+	fmt.Println(d2)
+
+	//even after having validation the behaviour is wrong
+	// move the field to separate package if you dont want the fields to be accessible , so we take advantage of unexported variable with package
+
+	// getter method  can be writtent to get the values back similar to setter written below
+	// gettter method name should be similar to variable name
+
+	// if we dont need encapsulation it is generally ok to access it directly and use it -- general convention in go
+
+	// Unexported fields dont get promoted.
+
+}
+
+func (d *date) setYear(year int) error {
+
+	if year < 1 {
+		return errors.New("invalid year provided")
+	}
+	d.year = year
+	return nil
+}
+
+func (d *date) setMonth(month int) {
+	d.month = month
+}
+
+func (d *date) setDay(day int) {
+	d.day = day
+}
+
+type date struct {
+	year  int
+	month int
+	day   int
 }
 
 func (e ExperimentType) receiverPointerExample() {
