@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 
 	// "greetings"
 	// "greetings/englishbye"
@@ -320,28 +322,28 @@ func main() {
 
 	// 10. Encapsulation
 
-	d := date{year: 2021, month: 5, day: 27}
+	// d := date{year: 2021, month: 5, day: 27}
 
-	fmt.Println(d)
+	// fmt.Println(d)
 
-	d.setDay(25)
-	d.setMonth(12)
-	d.setYear(2021)
+	// d.setDay(25)
+	// d.setMonth(12)
+	// d.setYear(2021)
 
-	fmt.Println(d)
+	// fmt.Println(d)
 
 	// err := d.setYear(-200)
 	// if err != nil {
 	// 	log.Fatal(err.Error())
 	// }
 
-	d2 := date{}
+	// d2 := date{}
 
-	d2.setDay(2)
-	d2.year = -56
-	d2.month = -200
+	// d2.setDay(2)
+	// d2.year = -56
+	// d2.month = -200
 
-	fmt.Println(d2)
+	// fmt.Println(d2)
 
 	//even after having validation the behaviour is wrong
 	// move the field to separate package if you dont want the fields to be accessible , so we take advantage of unexported variable with package
@@ -353,6 +355,314 @@ func main() {
 
 	// Unexported fields dont get promoted.
 
+	//11 . An interface can be satisfied by more than one classes.
+
+	// if we not implement event method defined for interface we cannot use interface type for variable
+	// var myVar myInterface = interfaceAbidingType{myFloat: 23.4}
+	// in case if we wamt to use pointer method then we need to assign address , go will be handle that
+
+	// var myVar myInterface = &interfaceAbidingType{myFloat: 23.4}
+	// myVar.myMethod()
+	// myVar.myMethodWithArgument(23)
+	// myVar.myMethodWithPointer()
+	// fmt.Println(myVar.myMethodWithReturnType())
+	// myVar.myMethod2WithReturnType()// cannot call a method that is not part of interface
+	// fmt.Println(myVar)
+
+	// methodThatCallsInterface(myVar)
+
+	// rules are same for naming of interface.
+
+	// we need to revisit lesson related to package and interface , sometime again.
+
+	// type assertions
+
+	// myVar2, ok := myVar.(*interfaceAbidingType) // type assertion expose second optional value which can be used to see if type assertion succeded or failed.
+	// type assertion dont panic until and unless a method is called on type where it doesnt exist
+
+	// if ok {
+	// 	fmt.Println(myVar2.myMethod2WithReturnType())
+	// } else {
+	// 	fmt.Print(ok)
+	// }
+
+	// how to read the above
+	// “I know this variable uses the interface type myInterface, but I’m pretty sure this myInterface is actually a interfaceAbidingType.”
+
+	// error value is any value with named error and returns string // error is an interface
+	// error interface is give below
+
+	// 	type error interface {
+	// 		Error() string
+	//  }
+
+	//error is predeclared identifier like int string -- its a universal block
+
+	// we can use anything in universe block encompasses all packages blocks.
+	// without importing.
+
+	// fmt package has Stringer interface
+
+	// type Stringer interface{
+	// 		string() string
+	// }
+
+	// with type interface , you can take in any type as it is an empty interface
+	// empty interface can be defined in below way
+
+	// type EmptyInterface interface{}
+
+	// it is recommended not use interface because for each method call we would eventually require type assertions.
+
+	// 12. Panic
+
+	//defer keyword , makes the code run late, as in until all the things in method are done
+	// err := deferredResultExample()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	//only function and method calls can be deferred
+
+	// how to read directory io/iotuil package there is ReadDir function
+
+	// directoryReadingExample()
+
+	// panicExample()
+
+	// panicDeferredExample()
+
+	// when to call panic ??
+
+	//simplifies code but crashes program.
+
+	// inaccessible file , network failures and bad user -> normal -> errors should be able to help here
+	// for impossible situation we use panic like some bug and not users mistake
+
+	// recover
+
+	// recover returns nil in context of normal executing program
+	// recoverExample()
+
+	// panic accepts interfaces and recover returns empty interfaces
+
+	// if panic is not intended to be recovered just panic again
+
+	// panic and recover is not be used like exception -- golang maintainers are against it.
+	// panic and recover is intentionally clumsy so that people wont use them often
+
+	//13. gocoroutine and channels
+	// go coroutine allows different task to be done parallely
+	// routine can coordinate work using channels.
+	// channels help for passing the data and synchronize.
+
+	// fmt.Println("Executing via uni")
+	// uniTaskExample()
+
+	// in go concurrent tasks are called coroutines
+
+	// compared to threads : requires less memory and lesser startup and stop time . so it means we can run more number of gocoroutine
+	// we just need to use go keyword for multi tasking
+	// main is also a go routine
+	// if we run the below program without channels nothing will be printed as in similar to case of join because all of them are executing in parallel
+
+	// fmt.Println("Executing via multi")
+	// multiTaskExample()
+
+	// gocoroutine function cannot return value.
+	// to communicate values to other function we can use channels.
+
+	// channels are declared with keyword chan
+
+	//below code results in deadlock
+	//reason :: main coroutine is waiting for other coroutine to provide response on channel but there is no other coroutine
+
+	// var myChannel chan int
+	// myChannel = make(chan int)
+
+	// myChannel2 := make(chan int)
+
+	// myChannel <- 123
+	// myChannel2 <- 345
+	// fmt.Println(<-myChannel)
+	// fmt.Println(<-myChannel2)
+
+	returnChannel := make(chan int)
+
+	multiTaskWithChannel(returnChannel)
+	fmt.Println(<-returnChannel)
+	fmt.Println(<-returnChannel)
+	fmt.Println(<-returnChannel)
+
+	// channel values are conveyed as and when they are provided above one by one
+	// until then main thread is blocked
+
+	// if a go coroutine is in sleep then the sending coroutine will block until receving coroutine gets it.
+
+	// we can also send struct over channel
+}
+
+func multiTaskWithChannel(returnChannel chan int) {
+	go getExampleWithChannel("http://example.com", returnChannel)
+	go getExampleWithChannel("http://google.com", returnChannel)
+	go getExampleWithChannel("http://facebook.com", returnChannel)
+
+}
+
+func getExampleWithChannel(url string, returnChannel chan int) {
+	response, err := http.Get(url) // returns an http response
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer response.Body.Close() // to close the network connection
+
+	body, err := ioutil.ReadAll(response.Body) // io utils are used to read the contents of response body
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// fmt.Println(string(body)) // slice of byte value is provided to string function
+	// fmt.Println(len(body))
+	returnChannel <- len(body)
+}
+
+func multiTaskExample() {
+	go getExample("http://example.com")
+	go getExample("http://google.com")
+	go getExample("http://facebook.com")
+	time.Sleep(5. * time.Second)
+}
+
+func uniTaskExample() {
+	getExample("http://example.com")
+	getExample("http://google.com")
+	getExample("http://facebook.com")
+}
+
+func getExample(url string) {
+	response, err := http.Get(url) // returns an http response
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer response.Body.Close() // to close the network connection
+
+	body, err := ioutil.ReadAll(response.Body) // io utils are used to read the contents of response body
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// fmt.Println(string(body)) // slice of byte value is provided to string function
+	fmt.Println(len(body))
+}
+
+func recoverExample() {
+	panickingfunction()
+}
+
+func executeRecover() {
+	fmt.Println(recover()) // in case of non panic it will return nil
+	fmt.Println("Recovering after panic")
+}
+
+func panickingfunction() {
+	defer executeRecover()
+	fmt.Println("Something bad is going to happen") //this statement is not executed :D
+	panic("Shit!! bad happened")
+
+}
+
+func panicDeferredExample() {
+	pf1()
+}
+
+func pf1() {
+	defer fmt.Println("Hello boy")
+	pf2()
+}
+func pf2() {
+	defer fmt.Println("What's up")
+	panicExample()
+}
+
+func panicExample() {
+	panic("Oh No I fucked up")
+}
+
+func directoryReadingExample() {
+	readOutCompleteDirectoryContent("D:\\Hustle\\programming\\learning_go\\GoLangLearn\\src\\directoryStruct")
+}
+func readOutCompleteDirectoryContent(path string) {
+	files, err := ioutil.ReadDir(path)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			fmt.Println("Directory:", file.Name())
+			readOutCompleteDirectoryContent(path + "\\" + file.Name())
+		} else {
+			fmt.Println("File:", file.Name())
+		}
+	}
+}
+
+func deferredResultExample() error {
+	// here the deferred example shows that
+	// with defer all the methods below it are completed.
+	defer fmt.Println("Hello")
+	fmt.Println("Hello2")
+
+	defer fmt.Println("Hello3")
+	defer fmt.Println("Hello4")
+	if 1 == 1 {
+		return fmt.Errorf("this is an error")
+	}
+	defer fmt.Println("Hello4")
+
+	return nil
+}
+
+func methodThatCallsInterface(intface myInterface) {
+	intface.myMethod()
+}
+
+type myInterface interface {
+	// contains set of methods
+
+	myMethod()
+	myMethodWithArgument(float64)
+	myMethodWithReturnType() string
+	myMethodWithPointer()
+}
+
+type interfaceAbidingType struct {
+	myFloat float64
+}
+
+func (i *interfaceAbidingType) myMethodWithPointer() {
+	fmt.Println("call from pointer", i)
+}
+
+func (i *interfaceAbidingType) myMethod() {
+	fmt.Println("Hello")
+}
+
+func (i *interfaceAbidingType) myMethodWithArgument(myVal float64) {
+	fmt.Println(myVal)
+}
+
+func (i *interfaceAbidingType) myMethodWithReturnType() string {
+	return "Hello"
+}
+
+func (i *interfaceAbidingType) myMethod2WithReturnType() int {
+	return 23
 }
 
 func (d *date) setYear(year int) error {
